@@ -1,9 +1,8 @@
 import styled from "styled-components";
 
-export default function Button({ content }) {
-  return <StyledButton>{content}</StyledButton>;
+export default function Button({ content,onClick }) { // onClick here is added by me
+  return <StyledButton onClick={onClick}>  {content}  </StyledButton>;
 }
-         
 // .btn-grad {
 //     background-image: linear-gradient(to right, #E55D87 0%, #5FC3E4  51%, #E55D87  100%);
 //     margin: 10px;

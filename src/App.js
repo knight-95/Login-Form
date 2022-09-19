@@ -3,24 +3,78 @@ import Button from "./components/Button";
 import Icon from "./components/Icon";
 import Input from "./components/Input";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
+import "./App.css";
+import { ethers } from "ethers";
+import Web3Modal from "web3modal";
+import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
+import { useState } from "react";
+
+const providerOptions = {
+  coinbasewallet: {
+    package: CoinbaseWalletSDK,
+    options: {
+      appName: "Login Page",
+      infuraId: {
+        3: "https://ropsten.infura.io/v3/23c4f9c3ad064658a1f524115f46ad29",
+      },
+    },
+  },
+};
 
 function App() {
+  const [Web3Provider, setWeb3Provider] = useState(null);
+
+  async function connectWallet() {
+    const web3Modal = new Web3Modal({
+      cacheProvider: false, // optional
+      providerOptions, // required
+      disableInjectedProvider:false,
+    });
+
+    const instance = await web3Modal.connect();
+    const provider = new ethers.providers.Web3Provider(instance);
+    if (provider) {
+      setWeb3Provider(provider);
+    }
+    // console.log(provider);
+  }
+
   const FacebookBackground =
     "linear-gradient(to right, #0546A0 0%, #0546A0 40%, #663FB6 100%)";
   const InstagramBackground =
     "linear-gradient(to right, #A12AC4 0%, #ED586C 40%, #F0A853 100%)";
   const TwitterBackground =
     "linear-gradient(to right, #56C1E1 0%, #35A9CE 50%)";
+
   return (
+
+
     <MainContainer>
       <WelcomeText>Welcome</WelcomeText>
       <InputContainer>
         <Input type="text" placeholder="Email" />
         <Input type="password" placeholder="Password" />
       </InputContainer>
-      <ButtonContainer>
-        <Button content="LOGIN" />
-      </ButtonContainer>
+      <br />
+      {/* <ButtonContainer>
+        <Button content="LOGIN" onClick={connectWallet} />
+      </ButtonContainer> */}
+
+      {Web3Provider == null ? (
+        //run if null
+        <ButtonContainer>
+        <Button content="LOGIN" onClick={connectWallet} />
+        </ButtonContainer>
+        
+      ) : (
+        //run if there
+        <div>
+          <p>Connected</p>
+          <p>Address : {Web3Provider.provider.selectedAddress}</p>
+        </div>
+      )}
+    
+
       <LoginWith>OR LOGIN WITH</LoginWith>
       <HorizontalRule />
       <IconsContainer>
@@ -36,6 +90,19 @@ function App() {
       </IconsContainer>
       <ForgotPassword>Forgot Password ?</ForgotPassword>
     </MainContainer>
+    /* <div className="App">
+      <h1>Wallet Connect Tutorial</h1>
+      {Web3Provider == null ? (
+        //run if null
+        <button onClick={connectWallet}>Connect Wallet</button>
+      ) : (
+        //run if there
+        <div>
+          <p>Connected</p>
+          <p>Address : {Web3Provider.provider.selectedAddress}</p>
+        </div>
+      )}
+    </div> */
   );
 }
 
@@ -136,3 +203,5 @@ const ForgotPassword = styled.h4`
 `;
 
 export default App;
+
+
